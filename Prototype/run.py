@@ -8,6 +8,8 @@ from src.staging import extract_all, to_pipeline_frame
 from src.pipeline import run_frame
 from src.export import safe_export
 from src.mdm_writer import write_mdm
+from src.evaluate import evaluate
+import pandas as pd
 from src.llm_client import call_ollama, MODEL
 
 def mock(prompt, system):
@@ -32,9 +34,12 @@ def main():
     safe_export(out, "output/golden.xlsx"); safe_export(rev, "output/review.xlsx")
     rej.to_csv("output/rejects.csv", index=False)
     mdm = write_mdm(out)
+    accuracy = "no truth file configured"
+    if cfg.get("truth_path") and os.path.exists(cfg["truth_path"]):
+        accuracy = evaluate(out, rev, pd.read_csv(cfg["truth_path"], dtype=str, keep_default_na=False))
     report = {"run_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
               "model": "mock" if a.mock else MODEL, "staging_snapshot": run_dir,
-              "sources": manifest, "summary": summary, "mdm_write": mdm}
+              "sources": manifest, "summary": summary, "accuracy": accuracy, "mdm_write": mdm}
     json.dump(report, open("output/run_report.json", "w"), indent=2)
     print(json.dumps(report, indent=2))
     return 0

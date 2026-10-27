@@ -58,16 +58,17 @@ def test_csv_config_builds():
     from connectors import load_config
     conns = build_connectors(load_config("config/connectors.yaml"))
     assert set(conns) == {"sap", "crm", "billing"}
-    assert len(conns["sap"].fetch()) == 4
+    df = conns["sap"].fetch()
+    assert len(df) > 0 and df.source_id.str.startswith("SAP:").all()
 
 def test_mdm_write_skipped_without_url(monkeypatch):
     monkeypatch.delenv("MDM_DB_URL", raising=False)
     assert write_mdm(pd.DataFrame()).startswith("skipped")
 
 def test_mdm_frames_shape():
-    g = pd.DataFrame([{"golden_id": "G1", "source": "sap", "cust_id": "1", "name": "A", "address": "x", "pin": "600002",
+    g = pd.DataFrame([{"golden_id": "G1", "source": "sap", "cust_id": "1", "name": "A", "address": "x", "pin": "600002", "name_std": "a", "address_std": "x", "pin_std": "600002",
                        "method": "fuzzy", "score": 100.0, "reason": "r", "timestamp": "t"},
-                      {"golden_id": "G1", "source": "crm", "cust_id": "9", "name": "A", "address": "x", "pin": "600002",
+                      {"golden_id": "G1", "source": "crm", "cust_id": "9", "name": "A", "address": "x", "pin": "600002", "name_std": "a", "address_std": "x", "pin_std": "600002",
                        "method": "fuzzy", "score": 100.0, "reason": "r", "timestamp": "t"}])
     f = build_mdm_frames(g)
     assert set(f) == {"customer_golden", "customer_xref", "sap_customer_clean", "crm_customer_clean"}

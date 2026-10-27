@@ -29,5 +29,6 @@ def validate_frame(df: pd.DataFrame) -> pd.DataFrame:
     df = df[list(ALLOWED_COLS)].copy()          # drop unexpected columns
     for c in ("cust_id", "name", "address"):
         df[c] = df[c].map(clean_text)
+    df["pin_raw"] = df["pin"].map(clean_text)
     df["pin"] = df["pin"].map(normalize_pin)
     return df[df["cust_id"] != ""]

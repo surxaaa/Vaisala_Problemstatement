@@ -9,12 +9,12 @@ def build_mdm_frames(golden: pd.DataFrame) -> dict:
     g["source_id"] = g["source"].str.upper() + ":" + g["cust_id"]
     frames = {
         "customer_golden": (g.sort_values("source").groupby("golden_id", as_index=False)
-                             .agg(canonical_name=("name", "first"), canonical_pin=("pin", "first"),
+                             .agg(canonical_name=("name", "first"), canonical_pin=("pin_std", "first"),
                                   member_count=("cust_id", "count"))),
         "customer_xref": g[["golden_id", "source_id", "method", "score", "reason", "timestamp"]],
     }
     for s in g["source"].unique():
-        frames[f"{s}_customer_clean"] = g[g.source == s][["source_id", "golden_id", "name", "address", "pin"]]
+        frames[f"{s}_customer_clean"] = g[g.source == s][["source_id", "golden_id", "name", "address", "pin", "name_std", "address_std", "pin_std"]]
     return frames
 
 

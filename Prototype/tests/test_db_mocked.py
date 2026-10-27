@@ -93,7 +93,7 @@ def test_char_padding_nulls_and_text_pin_from_db(monkeypatch):
 # ---------- MDM write-back with a mocked engine ----------
 
 def mdm_setup(monkeypatch, count_override=None):
-    g = pd.DataFrame([{"golden_id": "G1", "source": "sap", "cust_id": "1", "name": "A", "address": "x", "pin": "600002",
+    g = pd.DataFrame([{"golden_id": "G1", "source": "sap", "cust_id": "1", "name": "A", "address": "x", "pin": "600002", "name_std": "a", "address_std": "x", "pin_std": "600002",
                        "method": "fuzzy", "score": 100.0, "reason": "r", "timestamp": "t"}])
     engine, conn, tx = MagicMock(), MagicMock(), MagicMock()
     engine.connect.return_value.__enter__.return_value = conn

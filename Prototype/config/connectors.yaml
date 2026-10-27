@@ -1,6 +1,7 @@
 # Active config: the demo reads the CSV files through the same connector interface.
 required: [sap, crm, billing]       # run fails (exit 4) if any of these cannot be read
 staging_dir: staging
+truth_path: data/truth.csv     # optional hand-labelled clusters for measuring accuracy
 sources:
   sap:
     type: csv

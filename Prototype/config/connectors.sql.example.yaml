@@ -2,6 +2,7 @@
 # Use a read-only DB user, TLS in the URL, and list columns explicitly (no SELECT *).
 required: [sap, crm, billing]
 staging_dir: staging
+# truth_path: data/truth.csv   # optional: only for labelled test data
 sources:
   sap:
     type: sql
