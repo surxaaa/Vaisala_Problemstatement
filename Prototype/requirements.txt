@@ -1,0 +1,5 @@
+rapidfuzz
+pandas
+openpyxl
+pytest
+tenacity
