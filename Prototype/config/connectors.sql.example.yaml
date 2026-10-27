@@ -1,0 +1,24 @@
+# Template for real systems. Copy to connectors.yaml and edit. Credentials come from ENVIRONMENT VARIABLES only.
+# Use a read-only DB user, TLS in the URL, and list columns explicitly (no SELECT *).
+required: [sap, crm, billing]
+staging_dir: staging
+sources:
+  sap:
+    type: sql
+    url_env: SAP_DB_URL              # e.g. hana+hdbcli://USER:PASS@host:30015
+    connect_args: {}
+    query: "SELECT KUNNR AS cust_no, NAME1 AS cust_name, STRAS AS street, PSTLZ AS postal FROM KNA1"
+    columns: {source_id: cust_no, name: cust_name, address: street, pin: postal}
+  crm:
+    type: sql
+    url_env: CRM_DB_URL              # e.g. postgresql+psycopg2://USER:PASS@host/db?sslmode=require
+    connect_args: {connect_timeout: 10}
+    query: "SELECT id, company, addr, zip, updated_at FROM accounts WHERE updated_at >= :since"
+    full_query: "SELECT id, company, addr, zip, updated_at FROM accounts"   # used when no --since is given
+    columns: {source_id: id, name: company, address: addr, pin: zip}
+  billing:
+    type: sql
+    url_env: BILLING_DB_URL          # e.g. mysql+pymysql://USER:PASS@host/db
+    query: "SELECT cust_code, cust_name, bill_addr, bill_pin FROM customers"
+    columns: {source_id: cust_code, name: cust_name, address: bill_addr, pin: bill_pin}
+# Optional write-back (option A only): set MDM_DB_URL to a database YOU own. If unset, nothing is written to any database.

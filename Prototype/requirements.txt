@@ -3,3 +3,9 @@ pandas
 openpyxl
 pytest
 tenacity
+pyyaml
+sqlalchemy
+# add only the drivers you need:
+# hdbcli sqlalchemy-hana  (SAP HANA)
+# psycopg2-binary         (Postgres)
+# pymysql                 (MySQL)

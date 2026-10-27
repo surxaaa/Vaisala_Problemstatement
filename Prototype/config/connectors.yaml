@@ -1,0 +1,16 @@
+# Active config: the demo reads the CSV files through the same connector interface.
+required: [sap, crm, billing]       # run fails (exit 4) if any of these cannot be read
+staging_dir: staging
+sources:
+  sap:
+    type: csv
+    path: data/sap.csv
+    columns: {source_id: cust_id, name: name, address: address, pin: pin}
+  crm:
+    type: csv
+    path: data/crm.csv
+    columns: {source_id: cust_id, name: name, address: address, pin: pin}
+  billing:
+    type: csv
+    path: data/billing.csv
+    columns: {source_id: cust_id, name: name, address: address, pin: pin}

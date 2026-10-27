@@ -48,10 +48,9 @@ def build_clusters(keys, match_edges, score_fn, min_pair=MIN_PAIR):
     return sorted(clusters), flagged
 
 
-def run(paths: dict, call_llm, now: str | None = None, breaker=None):
+def run_frame(df: pd.DataFrame, call_llm, now: str | None = None, breaker=None):
     now = now or datetime.now(timezone.utc).isoformat(timespec="seconds")
     breaker = breaker or CircuitBreaker()
-    df, _ = load_sources(paths)
     rejects, keep = [], []
     pii_count = 0
     for r in df.to_dict("records"):
@@ -118,3 +117,9 @@ def run(paths: dict, call_llm, now: str | None = None, breaker=None):
     summary = {"rows_in": len(df), "rows_kept": len(keep), "rejected": len(rej),
                "golden_records": len(clusters), "review_pairs": len(rev), "pii_masked_count": pii_count}
     return out, rev, rej, summary
+
+
+def run(paths: dict, call_llm, now: str | None = None, breaker=None):
+    """Convenience wrapper: CSV files (cust_id,name,address,pin) keyed by source name."""
+    df, _ = load_sources(paths)
+    return run_frame(df, call_llm, now, breaker)
